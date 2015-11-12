@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Metal Max</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<style>
+	body {
+		background-color: #000000;
+		font-family: "Microsoft YaHei";
+		text-aligh: center;
+	}
+	
+	div.center {
+		margin-top: 20px;
+		text-align: center;
+	}
+	
+	img {
+		opacity: 0.0;
+	}
+	
+	p {
+		transition: color 1s;
+		color: rgba(255, 255, 255, 0.0);
+		font-size: 20px;
+		font-weight: bold;
+	}
+	
+	p:hover {
+		cursor: pointer;
+	}
+</style>
+</head>
+<body>
+<div class="center">
+	<img id="img-title" src="images/title.png"/>
+</div>
+<div class="center">
+	<p id="push-start" onclick="start()">PUSH START</p>
+</div>
+<script src="js/global/jquery-1.11.2.min.js"></script>
+<script>
+	var opa = 0.0;
+	showTitle();
+	function showTitle() {
+		opa += 0.1;
+		if (opa <= 1.0) {
+			$("#img-title").css("opacity", opa);
+			setTimeout(arguments.callee, 100);
+		} else {
+			$("#push-start").css("color", "rgba(255, 255, 255, 1.0)");
+		}
+	}
+	function start() {
+		location.replace("new.html");
+	}
+</script>
+</body>
+</html>

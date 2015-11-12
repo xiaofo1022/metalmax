@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Game Over</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<style>
+	@-webkit-keyframes gameover {
+		from {font-size: 1px;transform: rotate(0deg);}
+		to {font-size: 60px;transform: rotate(360deg);}
+	}
+	
+	body {
+		background-color: #000000;
+		font-family: "Microsoft YaHei";
+		text-aligh: center;
+		overflow: hidden;
+	}
+	
+	div.center {
+		text-align: center;
+	}
+	
+	p {
+		-webkit-animation: gameover 1s;
+		color: #FFFFFF;
+		font-size: 60px;
+		font-weight: bold;
+	}
+	
+	span {
+		color: #FFFFFF;
+		font-size: 50px;
+		font-weight: bold;
+		margin: 20px;
+	}
+	
+	span:hover {
+		border: 6px solid #FFFFFF;
+		border-radius: 6px;
+		cursor: pointer;
+	}
+</style>
+</head>
+<body>
+<div class="center" style="margin-top:120px;">
+	<p>GAME OVER</p>
+</div>
+<div class="center">
+	<Span onclick="retry()">Retry</Span><Span style="margin-left:80px;margin-top:10px;" onclick="end()">End</Span>
+</div>
+<script>
+	function retry() {
+		location.replace("new.html");
+	}
+	function end() {
+		location.replace("index.html");
+	}
+</script>
+</body>
+</html>

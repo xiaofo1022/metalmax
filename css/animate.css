@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+
+@-webkit-keyframes ani-show-item {
+	0% {width: 0%; height: 0%; background-color: rgba(255, 255, 255, 0);}
+	100% {width: 0%; height: 0%; background-color: rgba(255, 255, 255, 1.0);}
+}
+
+.animate-show:hover {
+	-webkit-animation: ani-show-item 1s;
+}
