@@ -287,17 +287,19 @@
 		}
 	}
 	
+    var RAND_DIST = 128;
+    
 	function getRandomDest(hero) {
 		var random = Math.floor(Math.random() * 4);
 		switch (random) {
 			case 0:
-				return {x: hero.x, y: hero.y + 64};
+				return {x: hero.x, y: hero.y + RAND_DIST};
 			case 1:
-				return {x: hero.x - 64, y: hero.y};
+				return {x: hero.x - RAND_DIST, y: hero.y};
 			case 2:
-				return {x: hero.x + 64, y: hero.y};
+				return {x: hero.x + RAND_DIST, y: hero.y};
 			case 3:
-				return {x: hero.x, y: hero.y - 64};
+				return {x: hero.x, y: hero.y - RAND_DIST};
 			default:
 				return {x: hero.x, y: hero.y};
 		}

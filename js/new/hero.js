@@ -8,7 +8,7 @@ var Hero = function(imgsrc, x, y, direction, context) {
 	this.frameDelay = 0;
 	this.level = 1;
 	this.exp = 0;
-	this.step = 2;
+	this.step = 1;
 	this.die = false;
 	this.life = 10;
 	this.MAX_BREATH = 30;
@@ -16,6 +16,7 @@ var Hero = function(imgsrc, x, y, direction, context) {
 	this.canWalk = true;
 	this.randomDistance = 20;
 	this.dest = null;
+    this.speed = 4;
 	var ins = this;
 	this.img = new Image();
 	this.img.src = imgsrc;
@@ -224,7 +225,7 @@ Hero.prototype = {
 	},
 	
 	changeStep: function(prop, isPlus, maxmium) {
-		for (var i = 0; i < this.step; i++) {
+		//for (var i = 0; i < this.step; i++) {
 			var wall = "";
 			if (this.buildingMap) {
 				wall = this.buildingMap.wallCheck(this.x, this.y);
@@ -238,12 +239,12 @@ Hero.prototype = {
 				if (this[prop] < maxmium) {
 					if (prop == "x") {
 						if (wall != "L") {
-							this.x++;
+							this.x += this.speed;
 						}
 					}
 					if (prop == "y") {
 						if (wall != "T") {
-							this.y++;
+							this.y += this.speed;
 						}
 					}
 				}
@@ -251,17 +252,17 @@ Hero.prototype = {
 				if (this[prop] > 0) {
 					if (prop == "x") {
 						if (wall != "R") {
-							this.x--;
+							this.x -= this.speed;
 						}
 					}
 					if (prop == "y") {
 						if (wall != "B") {
-							this.y--;
+							this.y -= this.speed;
 						}
 					}
 				}
 			}
-		}
+		//}
 	},
 	
 	changeFrame: function() {
