@@ -16,13 +16,15 @@
 		padding: 0;
 	}
 
-	canvas.front {
+	canvas {
 		position: absolute;
 		left: 0;
 		top: 0;
 	}
 	
 	div.console {
+        position: absolute;
+        bottom: 0px;
 		color: #FFFFFF;
 		width: 640px;
 		height: 35px;
@@ -43,12 +45,20 @@
     canvas:hover {
         cursor: crosshair;
     }
+    
+    .outer {
+        position: absolute;
+        width: 640px;
+        height: 540px;
+        left: 50%;
+        top: 50%;
+        margin-left: -320px;
+        margin-top: -270px;
+    }
 </style>
 </head>
 <body>
-<div class="container">
-<div class="row">
-<div class="col-lg-offset-2 col-lg-10 screen">
+<div class="outer">
 	<canvas id="map" width="640" height="480"></canvas>
 	<canvas id="battle" width="640" height="480" class="front"></canvas>
 	<canvas id="front" width="640" height="480" class="front"></canvas>
@@ -57,8 +67,6 @@
 		Score: <span id="s-score">0</span>
 		<div id="div-life" class="breath"></div>
 	</div>
-</div>
-</div>
 </div>
 <script src="js/global/jquery-1.11.2.min.js"></script>
 <script src="js/global/util.js"></script>
@@ -106,7 +114,7 @@
 	var heroPos = {x:320, y:240};
 	var gun = new Gun(battlectx);
 	gun.setEnemyList(enemyList);
-	var hero = new Hero("images/heros/wolf.png", heroPos.x, heroPos.y, 0, frontctx);
+	var hero = new Hero("images/heros/wolf.png", heroPos.x, heroPos.y, 0, frontctx, 2);
 	hero.setEffect(effect);
 	hero.setLabels(levelSpan, scoreSpan, lifeDiv);
 	hero.setGun(gun);
@@ -148,7 +156,7 @@
 	}
 	
 	function start() {
-		//createEnemy();
+		createEnemy();
 		if (!isStarted) {
 			animate();
 			isStarted = true;
@@ -287,7 +295,7 @@
 		}
 	}
 	
-    var RAND_DIST = 128;
+    var RAND_DIST = 64;
     
 	function getRandomDest(hero) {
 		var random = Math.floor(Math.random() * 4);
@@ -316,7 +324,12 @@
 		doKeyboardAction(event.keyCode);
 	};
 	
+    window.onkeyup = function(event) {
+		clearKeyboardAction(event.keyCode);
+	};
+    
 	function doKeyboardAction(code) {
+        console.log(code);
 		switch (code) {
 			case 87:
 				hero.setCommand("U");
@@ -330,14 +343,20 @@
 			case 68:
 				hero.setCommand("R");
 				break;
-			case 75:
-				hero.setCommand("DASH");
-				break;
+            case 74:
+                hero.fire(hero.direction);
+                break;
 			default:
 				break;
 		}
 	}
 	
+    function clearKeyboardAction(code) {
+        if (code == 87 || code == 83 || code == 65 || code == 68) {
+            hero.setCommand(null);
+        }
+    }
+    
 	frontcns.onmousedown = function(event) {
 		event.preventDefault();
 		var loc = util.windowToCanvas(frontcns, event.clientX, event.clientY);

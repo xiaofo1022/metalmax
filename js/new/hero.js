@@ -1,4 +1,4 @@
-var Hero = function(imgsrc, x, y, direction, context) {
+var Hero = function(imgsrc, x, y, direction, context, speed) {
 	this.context = context;
 	this.PIXEL = 32;
 	this.x = x;
@@ -8,7 +8,6 @@ var Hero = function(imgsrc, x, y, direction, context) {
 	this.frameDelay = 0;
 	this.level = 1;
 	this.exp = 0;
-	this.step = 1;
 	this.die = false;
 	this.life = 10;
 	this.MAX_BREATH = 30;
@@ -16,7 +15,8 @@ var Hero = function(imgsrc, x, y, direction, context) {
 	this.canWalk = true;
 	this.randomDistance = 20;
 	this.dest = null;
-    this.speed = 4;
+    this.speed = speed ? speed : 1;
+    this.command = null;
 	var ins = this;
 	this.img = new Image();
 	this.img.src = imgsrc;
@@ -116,6 +116,7 @@ Hero.prototype = {
 				}
 			} else {
 				this.context.drawImage(this.img, this.frame * 32, this.direction * 32, 32, 32, this.x, this.y, 32, 32);
+                this.walk();
 			}
 		}
 	},
@@ -132,33 +133,23 @@ Hero.prototype = {
 		if (this.die) {
 			return;
 		}
-		switch (code) {
-			case "U":
-				this.direction = 3;
-				this.changeFrame();
-				this.changeStep("y", false);
-				break;
-			case "D":
-				this.direction = 0;
-				this.changeFrame();
-				this.changeStep("y", true, 448);
-				break;
-			case "L":
-				this.direction = 1;
-				this.changeFrame();
-				this.changeStep("x", false);
-				break;
-			case "R":
-				this.direction = 2;
-				this.changeFrame();
-				this.changeStep("x", true, 608);
-				break;
-			case "DASH":
-				//this.dash();
-				break;
-			default:
-				break;
-		}
+        this.command = code;
+            switch (code) {
+                case "U":
+                    this.direction = 3;
+                    break;
+                case "D":
+                    this.direction = 0;
+                    break;
+                case "L":
+                    this.direction = 1;
+                    break;
+                case "R":
+                    this.direction = 2;
+                    break;
+                default:
+                    break;
+            }
 	},
 	
 	fire: function(direction) {
@@ -224,45 +215,66 @@ Hero.prototype = {
 		}
 	},
 	
+    walk: function() {
+        switch (this.command) {
+			case "U":
+                this.changeFrame();
+				this.changeStep("y", false);
+				break;
+			case "D":
+                this.changeFrame();
+				this.changeStep("y", true, 448);
+				break;
+			case "L":
+                this.changeFrame();
+				this.changeStep("x", false);
+				break;
+			case "R":
+                this.changeFrame();
+				this.changeStep("x", true, 608);
+				break;
+			default:
+				break;
+		}
+    },
+    
 	changeStep: function(prop, isPlus, maxmium) {
-		//for (var i = 0; i < this.step; i++) {
-			var wall = "";
-			if (this.buildingMap) {
-				wall = this.buildingMap.wallCheck(this.x, this.y);
-				var teasure = this.buildingMap.hitTeasure(this.x, this.y);
-				if (teasure) {
-					this.eatTeasure(teasure);
-					this.buildingMap.removeTeasure(teasure);
-				}
-			}
-			if (isPlus) {
-				if (this[prop] < maxmium) {
-					if (prop == "x") {
-						if (wall != "L") {
-							this.x += this.speed;
-						}
-					}
-					if (prop == "y") {
-						if (wall != "T") {
-							this.y += this.speed;
-						}
-					}
-				}
-			} else {
-				if (this[prop] > 0) {
-					if (prop == "x") {
-						if (wall != "R") {
-							this.x -= this.speed;
-						}
-					}
-					if (prop == "y") {
-						if (wall != "B") {
-							this.y -= this.speed;
-						}
-					}
-				}
-			}
-		//}
+        var wall = "";
+        if (this.buildingMap) {
+            wall = this.buildingMap.wallCheck(this.x, this.y);
+            var teasure = this.buildingMap.hitTeasure(this.x, this.y);
+            if (teasure) {
+                this.eatTeasure(teasure);
+                this.buildingMap.removeTeasure(teasure);
+            }
+        }
+        if (isPlus) {
+            if (this[prop] < maxmium) {
+                if (prop == "x") {
+                    if (wall != "L") {
+                        this.x += this.speed;
+                    }
+                }
+                if (prop == "y") {
+                    if (wall != "T") {
+                        this.y += this.speed;
+                    }
+                }
+            }
+        } else {
+            if (this[prop] > 0) {
+                if (prop == "x") {
+                    if (wall != "R") {
+                        this.x -= this.speed;
+                    }
+                }
+                if (prop == "y") {
+                    if (wall != "B") {
+                        this.y -= this.speed;
+                    }
+                }
+            }
+        }
 	},
 	
 	changeFrame: function() {
@@ -312,9 +324,11 @@ Hero.prototype = {
 				if (this.y < y) {
 					this.setCommand("D");
 				}
+                this.walk();
 				this.breath--;
 				if (this.breath == 0) {
 					this.canWalk = false;
+                    this.setCommand(null);
 				}
 			}
 		} else {
