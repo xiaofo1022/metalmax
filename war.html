@@ -4,340 +4,385 @@
 <meta charset="UTF-8">
 <title>Metal Max</title>
 <link rel="stylesheet" href="css/bootstrap.min.css"/>
-<link rel="stylesheet" href="css/blog.css"/>
-<link rel="stylesheet" href="css/war.css"/>
-<link rel="stylesheet" href="css/core.css"/>
 <style>
+	body {
+		background-color: #000000;
+		font-family: "Microsoft YaHei";
+		text-aligh: center;
+	}
 	
+	div.screen {
+		margin-top: 20px;
+		padding: 0;
+	}
+
+	canvas {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+	
+	div.console {
+        position: absolute;
+        bottom: 0px;
+		color: #FFFFFF;
+		width: 640px;
+		height: 35px;
+		margin: 10px 0px;
+		border: 2px solid #FFFFFF;
+		padding: 5px;
+	}
+	
+	div.breath {
+		width: 100px;
+		height: 10px;
+		border: 1px solid white;
+		background-color: #8EFF5E;
+		float: right;
+		margin-top: 5px;
+	}
+    
+    canvas:hover {
+        cursor: crosshair;
+    }
+    
+    .outer {
+        position: absolute;
+        width: 640px;
+        height: 540px;
+        left: 50%;
+        top: 50%;
+        margin-left: -320px;
+        margin-top: -270px;
+    }
 </style>
 </head>
 <body>
-<div class="container">
-<div class="row">
-<div class="col-lg-offset-2 col-lg-10 screen">
-	<canvas id="canvas" width="640" height="480"></canvas>
-	<canvas id="textcns" width="640" height="480" class="front"></canvas>
+<div class="outer">
+	<canvas id="map" width="640" height="480"></canvas>
+	<canvas id="battle" width="640" height="480" class="front"></canvas>
 	<canvas id="front" width="640" height="480" class="front"></canvas>
 	<div class="console">
-		<img title="移动" src="images/items/red.png" onclick="selectItem(this)"/>
-		<img title="翻土" src="images/items/spade.png" onclick="selectItem(this)"/>
-		<img title="浇水" src="images/items/bottle.png" onclick="selectItem(this)"/>
-		<img id="imgSetBoom" title="埋雷" src="images/items/boom.png" onclick="selectItem(this)"/>
-		<img title="草" src="images/items/grass.png" onclick="selectItem(this)"/>
-		<img title="灌木" src="images/items/bush.png" onclick="selectItem(this)"/>
-		<img title="树" class="hd" src="images/items/trees.png" onclick="selectItem(this)"/>
-		<img title="花" class="hd" src="images/items/flower.png" onclick="selectItem(this)"/>
-		<img title="绿萝卜" class="hd" src="images/items/green_radish.png" onclick="selectItem(this)"/>
-		<img title="红萝卜" class="hd" src="images/items/red_radish.png" onclick="selectItem(this)"/>
-		<img title="仙人掌" class="hd" src="images/items/cactus.png" onclick="selectItem(this)"/>
-		<img title="人参" class="hd" src="images/items/ginseng.png" onclick="selectItem(this)"/>
-		<img title="长工" class="hd" src="images/items/farmer.png" onclick="selectItem(this)"/>
-		<div>
-			<p class="step">Lv: <span id="level"></span> Step: <span id="step"></span></p>
-			<p class="exp">Money: <span id="money">0</span> Exp: <span id="exp">0</span></p>
-			<p class="exp"><img src="images/items/dried_fish.png"/> x <span id="fish">0</span></p>
-			<div id="breath" class="breath"></div>
-		</div>
+		Lv. <span id="s-lv">1</span>
+		Score: <span id="s-score">0</span>
+		<div id="div-life" class="breath"></div>
 	</div>
 </div>
-</div>
-</div>
 <script src="js/global/jquery-1.11.2.min.js"></script>
-<script src="js/global/bootstrap.min.js"></script>
 <script src="js/global/util.js"></script>
-<script src="js/warrior.js"></script>
-<script src="js/front_painter.js"></script>
-<script src="js/walk.js"></script>
-<script src="js/items.js"></script>
-<script src="js/item.js"></script>
-<script src="js/map.js"></script>
+<script src="js/new/effect.js"></script>
+<script src="js/new/building.js"></script>
+<script src="js/new/buildingMap.js"></script>
+<script src="js/new/bullet.js"></script>
+<script src="js/new/gun.js"></script>
+<script src="js/new/hero.js"></script>
 <script>
 	util.initAnimation();
 	
-	var breath = document.getElementById("breath");
-	var canvas = document.getElementById("canvas");
-	var context = canvas.getContext("2d");
-	var front = document.getElementById("front");
-	var fc = front.getContext("2d");
-	var textcns = document.getElementById("textcns");
-	var tc = textcns.getContext("2d");
-	var exp = document.getElementById("exp");
-	var step = document.getElementById("step");
-	var level = document.getElementById("level");
-	var money = document.getElementById("money");
-	var imgBoom = $("#imgSetBoom");
+	var levelSpan = document.getElementById("s-lv");
+	var scoreSpan = document.getElementById("s-score");
+	var lifeDiv = document.getElementById("div-life");
+	var mapctx = document.getElementById("map").getContext("2d");
+	var frontcns = document.getElementById("front");
+	var frontctx = frontcns.getContext("2d");
+	var battlectx = document.getElementById("battle").getContext("2d");
+	var deadbody = new Image();
+	deadbody.src = "images/heros/deadbody.png";
+	var downLadder = new Image();
+	downLadder.src = "images/items/down_ladder.png";
+	var upLadder = new Image();
+	upLadder.src = "images/items/up_ladder.png";
+	var desert = new Image();
+	desert.src = "images/items/desert.png";
+	var mapimg = new Image();
+	mapimg.src = "images/default_map.png";
+	mapimg.onload = function() {
+		mapctx.drawImage(this, 0, 0, 640, 480);
+		initBuildings();
+	};
 	
-	var items = new Items();
-	var map = new Map(canvas, context, "../images/default_map.png");
-	map.setTextPainter(tc);
-	map.setItems(items);
-	map.setWindow(this);
-	map.setFishLabel($("#fish"));
-	var frontPainter = frontPainter = new FrontPainter(fc);
-	frontPainter.setMap(map);
-	frontPainter.draw(frontPainter);
-	var isStartEnemyMove = true;
-	var gameMode = 0; // 0:single 1:multi
-	var hero = null;
-	var enemy = null;
+	var isStarted = false;
+	var stage = 1;
+	var holeMax = 2;
+	var boxMax = 2;
+	var buildingMap = new BuildingMap();
+	buildingMap.setShowLaddersFunc(showLadders);
+	var holePosList = [];
+	var enemyList = [];
+	var hostage = null;
+	var effect = new Effect(battlectx);
+	var heroPos = {x:320, y:240};
+	var gun = new Gun(battlectx);
+	gun.setEnemyList(enemyList);
+	var hero = new Hero("images/heros/wolf.png", heroPos.x, heroPos.y, 0, frontctx, 2);
+	hero.setEffect(effect);
+	hero.setLabels(levelSpan, scoreSpan, lifeDiv);
+	hero.setGun(gun);
+	hero.setDeadbody(deadbody);
+	hero.setBuildingMap(buildingMap);
+	hero.setInitFunc(init);
 	
-	startGame();
-	
-	function startGame() {
-		if (gameMode == 0) {
-			createEnemy();
-			hero = new Warrior("black_guy.png", [9, 7], "D");
-			var heroWalk = new Walk(hero);
-			map.setHero(hero);
-			frontPainter.setWarriorList([hero]);
+	function init(isUp) {
+		if (isUp) {
+			stageLevelUp();
 		} else {
-			hero = new Warrior("black_guy.png", [0, 14], "U");
-			hero.initSocket();
-			checkSocket();
+			stageLevelDown();
 		}
-		
-		if (hero) {
-			hero.setHiddenItems($(".hd"));
-			hero.setImgBoom(imgBoom);
-			hero.setItems(items);
-			hero.setExpLabel(exp);
-			hero.setStepLabel(step);
-			hero.setLevelLabel(level);
-			hero.setMoneyLabel(money);
-			hero.setBreath(breath);
+		buildingMap = new BuildingMap();
+		buildingMap.setShowLaddersFunc(showLadders);
+		hero.setBuildingMap(buildingMap);
+		holePosList = [];
+		enemyList = [];
+		gun.setEnemyList(enemyList);
+		hostage = null;
+		hero.setBuildingMap(buildingMap);
+		mapctx.clearRect(0, 0, 640, 480);
+		mapctx.drawImage(mapimg, 0, 0, 640, 480);
+		initBuildings();
+	}
+	
+	function stageLevelUp() {
+		stage++;
+		holeMax++;
+		boxMax++;
+	}
+	
+	function stageLevelDown() {
+		if (stage > 0) {
+			stage--;
+			holeMax--;
+			boxMax--;
 		}
 	}
 	
-	function checkSocket() {
-		if (hero.socketMode) {
-			if (hero.socketMode == "main") {
-				enemy = new Warrior("yellow_guy.png", [19, 0], "D");
-			} else {
-				enemy = new Warrior("yellow_guy.png", [0, 14], "U");
-				hero.setMapIndex([19, 0]);
-				hero.setDirection("D");
-			}
-			hero.setEnemy(enemy);
-			var heroWalk = new Walk(hero);
-			var enemyWalk = new Walk(enemy);
-			map.setHero(hero);
-			frontPainter.setWarriorList([hero, enemy]);
-		} else {
-			setTimeout(arguments.callee, 500);
+	function start() {
+		createEnemy();
+		if (!isStarted) {
+			animate();
+			isStarted = true;
 		}
 	}
 	
-	function createEnemy() {
-		if (isStartEnemyMove) {
-			enemy = getRandomEnemy();
-			var enemyWalk = new Walk(enemy);
-			frontPainter.addWarrior(enemy);
-			enemyMove(enemy);
-		} else {
-			isStartEnemyMove = true;
-		}
-		var loopTime = 60000;
-		if (hero) {
-			loopTime = 60000 - hero.level * 1000;
-			if (loopTime <= 0) {
-				loopTime = 1000;
-			}
-		}
-		setTimeout(arguments.callee, loopTime);
+	function initBuildings() {
+		createHoleOnMap();
 	}
 	
-	function getRandomEnemy(sourceUrl) {
-		var rand = Math.floor(Math.random() * 4);
-		var enemySource = sourceUrl ? sourceUrl : "crocodile.png";
-		switch (rand) {
-			case 0:
-				return new Warrior(enemySource, [19, 0], "D", 1);
-			case 1:
-				return new Warrior(enemySource, [0, 14], "R", 1);
-			case 2:
-				return new Warrior(enemySource, [19, 14], "U", 1);
-			case 3:
-				return new Warrior(enemySource, [0, 0], "D", 1);
-			default:
-				return new Warrior(enemySource, [19, 0], "D", 1);
+	function createHoleOnMap() {
+		while (holePosList.length < holeMax) {
+			var pos = getMapRandowPos();
+			if (pos) {
+				holePosList.push(pos);
+				createBuilding("images/items/boom.png", pos.x, pos.y, 100);
+			}
 		}
+		createBoxOnMap();
 	}
 	
-	function enemyMove(enemy) {
-		if (enemy.status == "stand") {
-			var ex = enemy.mx;
-			var ey = enemy.my;
-			var dest = getRandomDest(ex, ey);
-			if (dest) {
-				enemy.addDest(dest);
+	function createBoxOnMap() {
+		var boxCount = 0;
+		while (boxCount < boxMax) {
+			var pos = getMapRandowPos();
+			if (pos) {
+				var box = createBuilding("images/items/box.png", pos.x, pos.y, 1);
+				if (boxCount == 0) {
+					hostage = new Hero("images/heros/farmer.png", pos.x, pos.y, 0, frontctx);
+					hostage.setEffect(effect);
+					hostage.setExp(1);
+					hostage.setDeadbody(deadbody);
+					hostage.MAX_BREATH = 100;
+					enemyList.push(hostage);
+					box.initHostage(hostage);
+				} else {
+					box.setTeasure();
+				}
+				boxCount++;
 			}
 		}
-		setTimeout(arguments.callee, 3000, enemy);
+		start();
 	}
 	
-	function getRandomDest(x, y) {
-		var itemMap = map.itemMap;
-		var itemX;
-		var itemY;
-		for (var key in itemMap) {
-			var item = itemMap[key];
-			if (key && item && item.name != "boom") {
-				var xys = key.split(",");
-				itemX = parseInt(xys[0]);
-				itemY = parseInt(xys[1]);
-				break;
-			}
-		}
-		if (itemX && itemY) {
-			var randPixel = getRandowPixel();
-			var destX;
-			if (x == itemX) {
-				destX = x;
-			} else {
-				destX = x < itemX ? x + randPixel : x - randPixel;
-			}
-			var destY;
-			if (y == itemY) {
-				destY = y;
-			} else {
-				destY = y < itemY ? y + randPixel : y - randPixel;
-			}
-			if (destX < 0) {
-				destX = 0;
-			}
-			if (destX > 19 * 32) {
-				destX = 19 * 32;
-			}
-			if (destY < 0) {
-				destY = 0;
-			}
-			if (destY > 14 * 32) {
-				destY = 14 * 32;
-			}
-			return {x: destX, y: destY};
+	function getMapRandowPos() {
+		var randX = Math.floor(Math.random() * 20) * 32;
+		var randY = Math.floor(Math.random() * 15) * 32;
+		if (!buildingMap.hasBuilding(randX, randY)
+			&& randX != heroPos.x && randY != heroPos.y) {
+			return {x:randX, y:randY};
 		} else {
 			return null;
 		}
 	}
 	
-	function getRandowPixel() {
-		var rand = Math.floor(Math.random() * 3);
-		switch (rand) {
-			case 0:
-				return 32;
-			case 1:
-				return 64;
-			case 2:
-				return 96;
-			default:
-				return 32;
-		}
+	function createBuilding(imgSrc, x, y, life) {
+		var building = new Building(mapctx, imgSrc, x, y, life);
+		building.setBuildingMap(buildingMap);
+		return building;
 	}
 	
-	function farmerMove(farmer) {
-		if (farmer.status == "stand") {
-			var fx = farmer.mx;
-			var fy = farmer.my;
-			var itemMap = map.itemMap;
-			for (var key in itemMap) {
-				var item = itemMap[key];
-				if (key && item && item.life <= 0 && item.maxLife > 0) {
-					var xys = key.split(",");
-					var dest = {x: parseInt(xys[0]), y: parseInt(xys[1])};
-					farmer.addDest(dest);
-				}
-			}
-		}
-		setTimeout(arguments.callee, 3000, farmer);
-	}
-	
-	function createFarmer() {
-		var farmer = getRandomEnemy("farmer.png");
-		farmer.setItem(items.items["bottle"]);
-		var farmerWalk = new Walk(farmer);
-		frontPainter.addWarrior(farmer);
-		farmerMove(farmer);
-	}
-	
-	function selectItem(img) {
-		if (items.isLoaded()) {
-			var name = util.getImageName(img.src);
-			var item = null;
-			if (name != "red") {
-				item = items.items[name];
-			}
-			if (gameMode == 0) {
-				if (name == "farmer") {
-					createFarmer();
-				} else {
-					hero.setItem(item);
-				}
+	function createEnemy() {
+		var pos = getRandomPos();
+		if (pos) {
+			if (buildingMap.hasBuilding(pos.x, pos.y)) {
+				var enemy = new Hero("images/heros/crocodile.png", pos.x, pos.y, 0, frontctx);
+				enemy.setStep(1);
+				enemy.setExp(10);
+				enemyList.push(enemy);
 			} else {
-				hero.sendCommand({type:"selectItem", data:name});
+				for (var i in holePosList) {
+					var hole = holePosList[i];
+					if (hole.x == pos.x && hole.y == pos.y) {
+						holePosList.splice(i, 1);
+						break;
+					}
+				}
+				arguments.callee();
 			}
 		}
+		setTimeout(arguments.callee, 10000);
 	}
 	
-	front.onclick = function(e) {
-		e.preventDefault();
-		var loc = util.windowToCanvas(front, e.clientX, e.clientY);
-		var dest = getDestination(loc);
-		if (gameMode == 0) {
-			hero.addDest(dest);
+	function showLadders() {
+		mapctx.clearRect(hostage.x, hostage.y, 32, 32);
+		mapctx.drawImage(desert, 0, 0, 32, 32, hostage.x, hostage.y, 32, 32);
+		hostage.setDeadbody(null);
+		var ladder;
+		if (hostage.complete && !hostage.die) {
+			hostage.destory();
+			mapctx.drawImage(upLadder, 0, 0, upLadder.width, upLadder.height, hostage.x, hostage.y, upLadder.width, upLadder.height);
+			ladder = Building.prototype.createTeasure("up_ladder", mapctx);
 		} else {
-			hero.sendCommand({type:"addDest", data:dest});
-		}
-	};
-	
-	front.onmousemove = function(e) {
-		e.preventDefault();
-		var loc = util.windowToCanvas(front, e.clientX, e.clientY);
-		var dest = getDestination(loc);
-		frontPainter.setDest(dest);
-	};
-	
-	front.oncontextmenu = function(e) {
-		e.preventDefault();
-		hero.rollbackDest();
-	};
-	
-	function getDestination(loc) {
-		var BLOCK_PIXEL = 32;
-		var countX = 0;
-		var countY = 0;
-		var resultX = loc.x;
-		var resultY = loc.y;
-		var destX = 0;
-		var destY = 0;
-		
-		resultX -= BLOCK_PIXEL;
-		while (resultX > 0) {
-			resultX -= BLOCK_PIXEL;
-			countX++;
-		}
-		
-		resultY -= BLOCK_PIXEL;
-		while (resultY > 0) {
-			resultY -= BLOCK_PIXEL;
-			countY++;
-		}
-		
-		destX = countX * BLOCK_PIXEL;
-		destY = countY * BLOCK_PIXEL;
-		
-		return {x: destX, y: destY};
-	}
-	
-	testDB();
-	
-	function testDB() {
-		$.get(
-			"http://localhost:8087/db/getUsers",
-			function(data, status) {
-				console.log(JSON.parse(data));
+			mapctx.drawImage(downLadder, 0, 0, downLadder.width, downLadder.height, hostage.x, hostage.y, downLadder.width, downLadder.height);
+			var building = buildingMap.getBuilding(hostage.x, hostage.y);
+			if (building) {
+				buildingMap.removeBuilding(building);
 			}
-		);
+			ladder = Building.prototype.createTeasure("down_ladder", mapctx);
+		}
+		buildingMap.addTeasure(hostage.x, hostage.y, ladder);
 	}
+	
+	function getRandomPos() {
+		var rand = Math.floor(Math.random() * holePosList.length);
+		return holePosList[rand];
+	}
+	
+	function draw() {
+		hero.draw();
+		if (hero.die) {
+			location.replace("gameover.html");
+		}
+		for (var i in enemyList) {
+			var enemy = enemyList[i];
+			if (enemy.complete) {
+				enemy.draw();
+				if (enemy.die) {
+					if (!enemy.deadbody) {
+						enemyList.splice(i, 1);
+					}
+				} else {
+					if (enemy.name == "farmer") {
+						if (enemy.complete) {
+							enemy.walkTo(getRandomDest(hostage));
+						}
+					} else {
+						if (hostage && hostage.complete && !hostage.die) {
+							enemy.walkTo(hostage);
+						} else {
+							enemy.walkTo(hero);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+    var RAND_DIST = 64;
+    
+	function getRandomDest(hero) {
+		var random = Math.floor(Math.random() * 4);
+		switch (random) {
+			case 0:
+				return {x: hero.x, y: hero.y + RAND_DIST};
+			case 1:
+				return {x: hero.x - RAND_DIST, y: hero.y};
+			case 2:
+				return {x: hero.x + RAND_DIST, y: hero.y};
+			case 3:
+				return {x: hero.x, y: hero.y - RAND_DIST};
+			default:
+				return {x: hero.x, y: hero.y};
+		}
+		return {x: hero.x, y: hero.y};
+	}
+	
+	function animate(time) {
+		frontctx.clearRect(0, 0, 640, 480);
+		draw();
+		window.requestAnimation(arguments.callee);
+	}
+	
+	window.onkeydown = function(event) {
+		doKeyboardAction(event.keyCode);
+	};
+	
+    window.onkeyup = function(event) {
+		clearKeyboardAction(event.keyCode);
+	};
+    
+	function doKeyboardAction(code) {
+        console.log(code);
+		switch (code) {
+			case 87:
+				hero.setCommand("U");
+				break;
+			case 83:
+				hero.setCommand("D");
+				break;
+			case 65:
+				hero.setCommand("L");
+				break;
+			case 68:
+				hero.setCommand("R");
+				break;
+            case 74:
+                hero.fire(hero.direction);
+                break;
+			default:
+				break;
+		}
+	}
+	
+    function clearKeyboardAction(code) {
+        if (code == 87 || code == 83 || code == 65 || code == 68) {
+            hero.setCommand(null);
+        }
+    }
+    
+	frontcns.onmousedown = function(event) {
+		event.preventDefault();
+		var loc = util.windowToCanvas(frontcns, event.clientX, event.clientY);
+		var herocx = hero.x + 16;
+		var herocy = hero.y + 16;
+		var disx = loc.x - herocx;
+		var disy = loc.y - herocy;
+		
+		if (Math.abs(disx) > Math.abs(disy)) {
+			//Left
+			if (disx < 0) {
+				hero.fire(1);
+			//Right
+			} else {
+				hero.fire(2);
+			}
+		} else {
+			//Up
+			if (disy < 0) {
+				hero.fire(3);
+			//Down
+			} else {
+				hero.fire(0);
+			}
+		}
+	};
 </script>
 </body>
 </html>

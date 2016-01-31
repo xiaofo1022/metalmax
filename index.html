@@ -30,6 +30,17 @@
 	p:hover {
 		cursor: pointer;
 	}
+	
+	span {
+		color: rgba(255, 255, 255, 1.0);
+		font-size: 20px;
+		font-weight: bold;
+		margin: 0 20px;
+	}
+	
+	span:hover {
+		cursor: pointer;
+	}
 </style>
 </head>
 <body>
@@ -37,7 +48,11 @@
 	<img id="img-title" src="images/title.png"/>
 </div>
 <div class="center">
-	<p id="push-start" onclick="start()">PUSH START</p>
+	<p id="push-start" onclick="modeSelect()">PUSH START</p>
+</div>
+<div id="mode-select" class="center" style="display:none;">
+	<span onclick="war()">征战沙场</span>
+	<span onclick="home()">卸甲归田</span>
 </div>
 <script src="js/global/jquery-1.11.2.min.js"></script>
 <script>
@@ -52,8 +67,15 @@
 			$("#push-start").css("color", "rgba(255, 255, 255, 1.0)");
 		}
 	}
-	function start() {
-		location.replace("new.html");
+	function modeSelect() {
+		$("#push-start").hide();
+		$("#mode-select").show();
+	}
+	function war() {
+		location.assign("war.html");
+	}
+	function home() {
+		location.assign("home.html");
 	}
 </script>
 </body>
