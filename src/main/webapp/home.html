@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Metal Max</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<link rel="stylesheet" href="css/blog.css"/>
+<link rel="stylesheet" href="css/war.css"/>
+<link rel="stylesheet" href="css/core.css"/>
+<style>
+	
+</style>
+</head>
+<body>
+<div class="container">
+<div class="row">
+<div class="col-lg-offset-2 col-lg-10 screen">
+	<canvas id="canvas" width="640" height="480"></canvas>
+	<canvas id="textcns" width="640" height="480" class="front"></canvas>
+	<canvas id="front" width="640" height="480" class="front"></canvas>
+	<div class="console">
+		<img title="移动" src="images/items/red.png" onclick="selectItem(this)"/>
+		<img title="翻土" src="images/items/spade.png" onclick="selectItem(this)"/>
+		<img title="浇水" src="images/items/bottle.png" onclick="selectItem(this)"/>
+		<img id="imgSetBoom" title="埋雷" src="images/items/boom.png" onclick="selectItem(this)"/>
+		<img title="草" src="images/items/grass.png" onclick="selectItem(this)"/>
+		<img title="灌木" src="images/items/bush.png" onclick="selectItem(this)"/>
+		<img title="树" class="hd" src="images/items/trees.png" onclick="selectItem(this)"/>
+		<img title="花" class="hd" src="images/items/flower.png" onclick="selectItem(this)"/>
+		<img title="绿萝卜" class="hd" src="images/items/green_radish.png" onclick="selectItem(this)"/>
+		<img title="红萝卜" class="hd" src="images/items/red_radish.png" onclick="selectItem(this)"/>
+		<img title="仙人掌" class="hd" src="images/items/cactus.png" onclick="selectItem(this)"/>
+		<img title="人参" class="hd" src="images/items/ginseng.png" onclick="selectItem(this)"/>
+		<img title="长工" class="hd" src="images/items/farmer.png" onclick="selectItem(this)"/>
+		<div>
+			<p class="step">Lv: <span id="level"></span> Step: <span id="step"></span></p>
+			<p class="exp">Money: <span id="money">0</span> Exp: <span id="exp">0</span></p>
+			<p class="exp"><img src="images/items/dried_fish.png"/> x <span id="fish">0</span></p>
+			<div id="breath" class="breath"></div>
+		</div>
+	</div>
+</div>
+</div>
+</div>
+<script src="js/global/jquery-1.11.2.min.js"></script>
+<script src="js/global/bootstrap.min.js"></script>
+<script src="js/global/util.js"></script>
+<script src="js/warrior.js"></script>
+<script src="js/front_painter.js"></script>
+<script src="js/walk.js"></script>
+<script src="js/items.js"></script>
+<script src="js/item.js"></script>
+<script src="js/map.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

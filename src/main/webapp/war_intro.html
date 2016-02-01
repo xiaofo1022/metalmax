@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Metal Max</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<link rel="stylesheet" href="css/index.css"/>
+</head>
+<body>
+<div class="center intro">
+	<p>游戏说明</p>
+	<p class="tal">
+		身为地球最强赏金猎人红狼<img src="images/intro/wolf.png"/>的你，即将开始征战沙场，领取赏金的峥嵘岁月，<br/>
+		下面我来告诉你本游戏的生存规则：
+	</p>
+	<p class="tal">
+		操作说明：移动：WSAD(上下左右)，射击：鼠标左键(根据十字瞄准的位置可向上下左右四个方向射击)<br/>
+		游戏规则：每关初始时地图上会出现一定数量的箱子<img src="images/intro/box.png"/>，射击箱子后可能会出现：
+	</p>
+	<p class="tal">
+		枪<img src="images/intro/gun.png"/>(用于提升攻击火力)，
+		野生萝卜<img src="images/intro/green_radish.png"/>(用于恢复体力)，
+		以及对于过关至关重要的人质<img src="images/intro/old_man.png"/>(稍后详细说明)
+	</p>
+	<p class="tal">
+		每关的地图上会在随机位置出现一定数量的洞穴<img src="images/intro/boom.png"/>，
+		洞穴中随时会爬出凶猛的鳄鱼<img src="images/intro/dried_fish.png"/>，
+		如果此时地图上还未出现人质，则鳄鱼会凶猛的扑向你，若人质已出现，则鳄鱼转向猛扑人质。
+	</p>
+	<p class="tal">
+		过关的任务为保证人质存活的情况下摧毁地图上所有的洞穴，此时人质所在的位置会出现一个向上的梯子<img src="images/intro/up_ladder.png"/>，
+		移动至梯子处即可前往下一层关卡，若人质不幸死亡<img src="images/intro/deadbody.png"/>，
+		则在摧毁所有洞穴后，人质尸体的位置会出现一个向下的梯子<img src="images/intro/down_ladder.png"/>，
+		你只能通过梯子返回上一层关卡重新来过。
+	</p>
+	<p class="tal">
+		通关条件：通过重重困难到达第99层，挑战重装机兵隐藏BOSS明奇博士。
+	</p>
+	<p class="tal">
+		结束条件：体力耗尽。
+	</p>
+	<div class="btn-start" onclick="start()">
+		我明白了，开始游戏吧！
+	</div>
+</div>
+<script>
+	function start() {
+		location.assign("war.html");
+	}
+</script>
+</body>
+</html>

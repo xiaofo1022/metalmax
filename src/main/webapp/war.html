@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Metal Max</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<style>
+	body {
+		background-color: #000000;
+		font-family: "Microsoft YaHei";
+		text-aligh: center;
+	}
+	
+	div.screen {
+		margin-top: 20px;
+		padding: 0;
+	}
+
+	canvas {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+	
+	div.console {
+        position: absolute;
+        bottom: 0px;
+		color: #FFFFFF;
+		width: 640px;
+		height: 35px;
+		margin: 10px 0px;
+		border: 2px solid #FFFFFF;
+		padding: 5px;
+	}
+	
+	div.breath {
+		width: 100px;
+		height: 10px;
+		border: 1px solid white;
+		background-color: #8EFF5E;
+		float: right;
+		margin-top: 5px;
+	}
+    
+    canvas:hover {
+        cursor: crosshair;
+    }
+    
+    .outer {
+        position: absolute;
+        width: 640px;
+        height: 540px;
+        left: 50%;
+        top: 50%;
+        margin-left: -320px;
+        margin-top: -270px;
+    }
+</style>
+</head>
+<body>
+<div class="outer">
+	<canvas id="map" width="640" height="480"></canvas>
+	<canvas id="battle" width="640" height="480" class="front"></canvas>
+	<canvas id="front" width="640" height="480" class="front"></canvas>
+	<div class="console">
+		Lv. <span id="s-lv">1</span>
+		Score: <span id="s-score">0</span>
+		<div id="div-life" class="breath"></div>
+	</div>
+</div>
+<script src="js/global/jquery-1.11.2.min.js"></script>
+<script src="js/global/util.js"></script>
+<script src="js/new/effect.js"></script>
+<script src="js/new/building.js"></script>
+<script src="js/new/buildingMap.js"></script>
+<script src="js/new/bullet.js"></script>
+<script src="js/new/gun.js"></script>
+<script src="js/new/hero.js"></script>
+<script src="js/new/game.js"></script>
+</body>
+</html>

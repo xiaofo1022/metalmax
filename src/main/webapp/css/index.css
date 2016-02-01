@@ -1,0 +1,71 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color: #000000;
+	font-family: "Microsoft YaHei";
+	text-aligh: center;
+}
+
+div.center {
+	margin-top: 20px;
+	text-align: center;
+}
+
+img#img-title {
+	opacity: 0.0;
+}
+
+p#push-start {
+	transition: color 1s;
+	color: rgba(255, 255, 255, 0.0);
+	font-size: 20px;
+	font-weight: bold;
+}
+
+p#push-start:hover {
+	cursor: pointer;
+}
+
+span {
+	color: rgba(255, 255, 255, 1.0);
+	font-size: 20px;
+	font-weight: bold;
+	margin: 0 20px;
+}
+
+span:hover {
+	cursor: pointer;
+}
+
+.intro {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	margin-left: -320px;
+	margin-bottom: 20px;
+	width: 640px;
+	border: 1px solid #fff;
+	color: rgba(255, 255, 255, 1.0);
+	font-size: 16px;
+	padding: 20px;
+	text-align: left;
+}
+
+.tal {
+	text-align: left;
+}
+
+.intro:after {
+	content: "";
+	clear: both;
+}
+
+.btn-start {
+	float: right;
+	border: 1px solid #fff;
+	padding: 10px;
+}
+
+.btn-start:hover {
+	cursor: pointer;
+}
