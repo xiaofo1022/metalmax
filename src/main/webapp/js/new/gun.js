@@ -40,7 +40,6 @@ Gun.prototype = {
 					this.fireLevel2(x, y, d);
 					break;
 			}
-			this.magzine--;
 		}
 	},
 	

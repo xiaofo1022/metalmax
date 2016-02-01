@@ -106,7 +106,7 @@ var util = {
 	
 	getImageName: function(src) {
 		var st = src.split(".");
-		st = st[0];
+		st = st[st.length - 2];
 		st = st.split("/");
 		st = st[st.length - 1];
 		return st;

@@ -106,7 +106,6 @@ function createBoxOnMap() {
 		if (pos) {
 			var box = createBuilding("images/items/box.png", pos.x, pos.y, 1);
 			if (boxCount == 0) {
-				while (!box.complete) {}
 				hostage = new Hero("images/heros/farmer.png", pos.x, pos.y, 0, frontctx);
 				hostage.setEffect(effect);
 				hostage.setExp(1);
